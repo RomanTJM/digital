@@ -155,7 +155,13 @@ function App() {
 
   // Подгрузка при скролле
   const handleScroll = (e) => {
-    if (hasMore && !loading && !isDragging && e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight) {
+    console.log('SCROLL', e.target.scrollTop, e.target.scrollHeight, e.target.clientHeight);
+    if (
+      hasMore &&
+      !loading &&
+      !isDragging &&
+      e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + 1
+    ) {
       setOffset(o => o + LIMIT);
     }
   };
