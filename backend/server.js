@@ -6,6 +6,14 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
+  );
+  next();
+});
+
 const ITEMS = Array.from({ length: 1_000_000 }, (_, i) => i + 1);
 let userState = {
   selection: {}, 

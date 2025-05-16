@@ -4,6 +4,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import './App.css';
 
 const LIMIT = 20;
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 function App() {
   const [items, setItems] = useState([]);
@@ -19,7 +20,7 @@ function App() {
 
   // Загрузка состояния выбора и порядка
   useEffect(() => {
-    axios.get('http://localhost:3001/selection').then(res => {
+    axios.get(`${API_URL}/selection`).then(res => {
       setSelection(res.data.selection || []);
       setOrder(res.data.order || []);
       setSearch(res.data.search || '');
@@ -33,7 +34,7 @@ function App() {
 
   // При смене поиска подгружаем соответствующие selection и order
   useEffect(() => {
-    axios.get('http://localhost:3001/selection').then(res => {
+    axios.get(`${API_URL}/selection`).then(res => {
       setSelection(res.data.selection || []);
       setOrder(res.data.order || []);
     });
@@ -60,7 +61,7 @@ function App() {
     setLoading(true);
 
     if (search) {
-      axios.get('http://localhost:3001/items', {
+      axios.get(`${API_URL}/items`, {
         params: { search, offset, limit: LIMIT }
       }).then(res => {
         setItems(prev => {
@@ -77,7 +78,7 @@ function App() {
     if (order.length > 0 && offset < order.length) {
       // Показываем только элементы из order
       const idsToShow = order.slice(offset, offset + LIMIT);
-      axios.get('http://localhost:3001/items', {
+      axios.get(`${API_URL}/items`, {
         params: { ids: idsToShow.join(',') }
       }).then(res => {
         setItems(prev => {
@@ -90,7 +91,7 @@ function App() {
       });
     } else if (order.length === 0) {
       // Если order пустой, сразу подгружаем из общего списка
-      axios.get('http://localhost:3001/items', {
+      axios.get(`${API_URL}/items`, {
         params: { offset, limit: LIMIT }
       }).then(res => {
         setItems(prev => {
@@ -102,7 +103,7 @@ function App() {
       });
     } else {
       // После order подгружаем остальные элементы
-      axios.get('http://localhost:3001/items', {
+      axios.get(`${API_URL}/items`, {
         params: { offset: offset - order.length, limit: LIMIT }
       }).then(res => {
         setItems(prev => {
@@ -117,7 +118,7 @@ function App() {
 
   // Сохранение состояния
   useEffect(() => {
-    axios.post('http://localhost:3001/selection', { selection, order, search });
+    axios.post(`${API_URL}/selection`, { selection, order, search });
   }, [selection, order, search]);
 
   // Drag&Drop обработчик
